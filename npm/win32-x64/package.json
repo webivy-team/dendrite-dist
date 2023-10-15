@@ -1,0 +1,16 @@
+{
+  "repository": "https://github.com/webivy-team/dendrite-dist",
+  "name": "dendrite-dist-win32-x64",
+  "license": "MIT",
+  "scripts": {
+    "release-prep": "version=$(cat ../dendrite-dist/package.json | jq -r '.version') && dendriteVersion=$(echo $version | sed -e 's/-[0-9]*$//g' | sed -e 's/^v//g') && jq '.version = \"'$version'\"' package.json > package.json.tmp && mv package.json.tmp package.json"
+  },
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "x64"
+  ],
+  "bin": "dendrite",
+  "version": "v0.13.3-1"
+}
