@@ -12,7 +12,5 @@ rm -rf dendrite-upstream/bin/*
 echo "building: darwin-x64"
 (cd dendrite-upstream && CGO_ENABLED=0 GOOS=darwin GOARCH=amd64 go build -o bin/ ./cmd/...; mkdir -p ../npm/darwin-x64/dist && rm -rf bin/dendrite-demo*; cp bin/* ../npm/darwin-x64/dist/)
 rm -rf dendrite-upstream/bin/*
-echo "building: win32-x64"
-(cd dendrite-upstream && CGO_ENABLED=0 GOOS=windows GOARCH=amd64 go build -o bin/ ./cmd/...; mkdir -p ../npm/win32-x64/dist && rm -rf bin/dendrite-demo*; cp bin/* ../npm/win32-x64/dist/)
 rm -rf dendrite-upstream/bin/*
 chmod +x ./npm/*/dist/*
