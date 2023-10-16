@@ -4,9 +4,5 @@
     "test": "node --test --experimental-test-coverage --test-reporter=spec"
   },
   "dependencies": {
-    "dendrite-dist": "file:../npm/dendrite-dist/dendrite-dist-v0.13.3-1.tgz",
-    "dendrite-dist-linux-x64": "file:../npm/linux-x64/dendrite-dist-linux-x64-v1.11.1-1.tgz",
-    "install": "^0.13.0",
-    "npm": "^10.2.0"
   }
 }
