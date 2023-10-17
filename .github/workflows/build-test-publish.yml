@@ -10,7 +10,7 @@ permissions: write-all
 
 env:
   DENDRITE_VERSION: 0.13.3
-  DENDRITE_DIST_VERSION: 1
+  DENDRITE_DIST_VERSION: 2
 
 jobs:
   build-package:

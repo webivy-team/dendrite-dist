@@ -34,19 +34,32 @@ const resolveStateBinPath = resolve(
   /^win/.test(process.platform) ? "resolve-state.exe" : "resolve-state",
 );
 
+const exists = async (path) => {
+  try {
+    const fileInfo = await stat(path);
+    if (!fileInfo.isFile() && !fileInfo.isDirectory()) { return false }
+    return true;
+  } catch (_e) {
+    return false;
+  }
+};
+
 export const createUser = (username, password) => {
   const accountProc = spawnSync(createAccountBinPath, ['--config', 'dendrite.yaml', '--username', username, '--password', password])
   console.log(accountProc?.stdout?.toString())
   console.error(accountProc?.stderr?.toString())
 }
 
-export default async () => {
+export const init = () => {
   const privKeyProc = spawnSync(generateKeysBinPath, ['--private-key', 'matrix_key.pem'])
   console.log(privKeyProc?.stdout?.toString())
   console.error(privKeyProc?.stderr?.toString())
   const tlsProc = spawnSync(generateKeysBinPath, ['--tls-cert', 'server.crt', '--tls-key', 'server.key'])
   console.log(tlsProc?.stdout?.toString())
   console.error(tlsProc?.stderr?.toString())
+}
+
+export default async () => {
   const proc = await new Promise((pResolve, reject) => {
     const proc = spawn(
       dendriteBinPath,
