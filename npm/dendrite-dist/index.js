@@ -44,26 +44,32 @@ const exists = async (path) => {
   }
 };
 
+// TODO: When running on a unix socket this needs to be passed a --url, probably with the reverse proxy url
 export const createUser = (username, password) => {
   const accountProc = spawnSync(createAccountBinPath, ['--config', 'dendrite.yaml', '--username', username, '--password', password])
   console.log(accountProc?.stdout?.toString())
   console.error(accountProc?.stderr?.toString())
 }
 
-export const init = () => {
+export const initMatrixKey = async () => {
+  if (await exists('matrix_key.pem')) return
   const privKeyProc = spawnSync(generateKeysBinPath, ['--private-key', 'matrix_key.pem'])
   console.log(privKeyProc?.stdout?.toString())
   console.error(privKeyProc?.stderr?.toString())
+}
+
+export const initTLSKey = async () => {
+  if (await exists('server.key')) return
   const tlsProc = spawnSync(generateKeysBinPath, ['--tls-cert', 'server.crt', '--tls-key', 'server.key'])
   console.log(tlsProc?.stdout?.toString())
   console.error(tlsProc?.stderr?.toString())
 }
 
-export default async () => {
+export default async (args = ['--tls-cert', 'server.crt', '--tls-key', 'server.key']) => {
   const proc = await new Promise((pResolve, reject) => {
     const proc = spawn(
       dendriteBinPath,
-      ['--tls-cert', 'server.crt', '--tls-key', 'server.key', '--config', 'dendrite.yaml'],
+      ['--config', 'dendrite.yaml', ...args],
     );
     proc.stderr?.on('data', (chunk) => {
       const message = chunk.toString('utf-8');

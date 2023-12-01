@@ -1,11 +1,12 @@
 import assert from "node:assert";
 import test from "node:test";
 
-import dendrite, {init, createUser} from "dendrite-dist"
+import dendrite, {initMatrixKey, initTLSKey, createUser} from "dendrite-dist"
 
 test("Server startup", async () => {
   // This will create keys
-  await init()
+  await initMatrixKey()
+  await initTLSKey()
   // Then start the server
   const server = await dendrite()
   await createUser('testuser', 'testpassword')
