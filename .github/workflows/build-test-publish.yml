@@ -10,7 +10,7 @@ permissions: write-all
 
 env:
   DENDRITE_VERSION: 0.13.6
-  DENDRITE_DIST_VERSION: 2
+  DENDRITE_DIST_VERSION: 3
 
 jobs:
   build-package:
@@ -18,7 +18,7 @@ jobs:
     steps:
       - name: Checkout master branch
         uses: actions/checkout@v4
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: '^1.21.0'
 
@@ -27,7 +27,7 @@ jobs:
           bash build.sh
 
       - name: Upload bundle repo-build
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: npm/
           name: repo-build
@@ -42,37 +42,37 @@ jobs:
           (cd ./npm/darwin-x64 && npm pack)
 
       - name: Upload bundle darwin-arm64
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: npm/darwin-arm64/dendrite-dist-darwin-arm64-*.tgz
           name: dendrite-dist-darwin-arm64.tgz
           if-no-files-found: error
       - name: Upload bundle darwin-x64
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: npm/darwin-x64/dendrite-dist-darwin-x64-*.tgz
           name: dendrite-dist-darwin-x64.tgz
           if-no-files-found: error
       - name: Upload bundle linux-x64
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: npm/linux-x64/dendrite-dist-linux-x64-*.tgz
           name: dendrite-dist-linux-x64.tgz
           if-no-files-found: error
       - name: Upload bundle linux-arm64
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: npm/linux-arm64/dendrite-dist-linux-arm64-*.tgz
           name: dendrite-dist-linux-arm64.tgz
           if-no-files-found: error
       - name: Upload bundle dendrite-dist
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: npm/dendrite-dist/dendrite-dist-*.tgz
           name: dendrite-dist.tgz
           if-no-files-found: error
       - name: Upload bundle tests
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           path: tests
           name: tests
@@ -83,16 +83,16 @@ jobs:
       - build-package
     steps:
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: tests
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist-linux-x64.tgz
       - name: Run NPM Test
@@ -105,13 +105,13 @@ jobs:
     needs:
       - build-package
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: tests
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist-linux-arm64.tgz
       - name: Run testing
@@ -134,16 +134,16 @@ jobs:
       - build-package
     steps:
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: tests
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist-darwin-x64.tgz
       - name: Run NPM Test
@@ -157,16 +157,16 @@ jobs:
       - build-package
     steps:
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: tests
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist-darwin-arm64.tgz
       - name: Run NPM Test
@@ -183,23 +183,23 @@ jobs:
       - test-darwin-arm64
     steps:
       - name: Setup Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: 20
           registry-url: 'https://registry.npmjs.org'
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist-linux-x64.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist-linux-arm64.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist-darwin-x64.tgz
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: dendrite-dist-darwin-arm64.tgz
       - name: Run NPM Publish
@@ -221,13 +221,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout master branch
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Download and unpack all workflow run artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: Download workflow run artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
 
       - name: List all files
         run: tree
