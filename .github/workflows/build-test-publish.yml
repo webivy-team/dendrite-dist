@@ -9,7 +9,7 @@ on:
 permissions: write-all
 
 env:
-  DENDRITE_VERSION: 0.13.3
+  DENDRITE_VERSION: 0.13.6
   DENDRITE_DIST_VERSION: 2
 
 jobs:
