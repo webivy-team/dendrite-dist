@@ -1,4 +1,5 @@
 import { spawn, spawnSync } from "node:child_process";
+import { stat } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
 import { fileURLToPath } from "node:url";
@@ -52,14 +53,14 @@ export const createUser = (username, password) => {
 }
 
 export const initMatrixKey = async () => {
-  if (await exists('matrix_key.pem')) return
+  if (await exists(resolve(process.cwd(), 'matrix_key.pem'))) return
   const privKeyProc = spawnSync(generateKeysBinPath, ['--private-key', 'matrix_key.pem'])
   console.log(privKeyProc?.stdout?.toString())
   console.error(privKeyProc?.stderr?.toString())
 }
 
 export const initTLSKey = async () => {
-  if (await exists('server.key')) return
+  if (await exists(resolve(process.cwd(), 'server.key'))) return
   const tlsProc = spawnSync(generateKeysBinPath, ['--tls-cert', 'server.crt', '--tls-key', 'server.key'])
   console.log(tlsProc?.stdout?.toString())
   console.error(tlsProc?.stderr?.toString())
