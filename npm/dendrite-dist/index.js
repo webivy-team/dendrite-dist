@@ -1,5 +1,5 @@
 import { spawn, spawnSync } from "node:child_process";
-import { stat } from "node:fs/promises";
+import { stat, readFile, unlink } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 
 import { fileURLToPath } from "node:url";
@@ -46,31 +46,37 @@ const exists = async (path) => {
 };
 
 // TODO: When running on a unix socket this needs to be passed a --url, probably with the reverse proxy url
-export const createUser = (username, password) => {
-  const accountProc = spawnSync(createAccountBinPath, ['--config', 'dendrite.yaml', '--username', username, '--password', password])
+export const createUser = (args) => {
+  const accountProc = spawnSync(createAccountBinPath, args)
   console.log(accountProc?.stdout?.toString())
   console.error(accountProc?.stderr?.toString())
 }
 
 export const initMatrixKey = async () => {
-  if (await exists(resolve(process.cwd(), 'matrix_key.pem'))) return
-  const privKeyProc = spawnSync(generateKeysBinPath, ['--private-key', 'matrix_key.pem'])
+  const privKeyProc = spawnSync(generateKeysBinPath, ['--private-key', '._tmp_matrix_key.pem'])
   console.log(privKeyProc?.stdout?.toString())
   console.error(privKeyProc?.stderr?.toString())
+  const key = await readFile('._tmp_matrix_key.pem', {encoding: 'utf8'})
+  await unlink('._tmp_matrix_key.pem')
+  return key
 }
 
 export const initTLSKey = async () => {
-  if (await exists(resolve(process.cwd(), 'server.key'))) return
-  const tlsProc = spawnSync(generateKeysBinPath, ['--tls-cert', 'server.crt', '--tls-key', 'server.key'])
+  const tlsProc = spawnSync(generateKeysBinPath, ['--tls-cert', '._tmp_server.crt', '--tls-key', '._tmp_server.key'])
+  const key = await readFile('._tmp_server.pem', {encoding: 'utf8'})
+  const crt = await readFile('._tmp_server.crt', {encoding: 'utf8'})
+  await unlink('._tmp_server.pem')
+  await unlink('._tmp_server.crt')
   console.log(tlsProc?.stdout?.toString())
   console.error(tlsProc?.stderr?.toString())
+  return {key, crt}
 }
 
-export default async (args = ['--tls-cert', 'server.crt', '--tls-key', 'server.key']) => {
+export default async (args = ['--config', 'dendrite.yaml', '--tls-cert', 'server.crt', '--tls-key', 'server.key']) => {
   const proc = await new Promise((pResolve, reject) => {
     const proc = spawn(
       dendriteBinPath,
-      ['--config', 'dendrite.yaml', ...args],
+      args,
     );
     proc.stderr?.on('data', (chunk) => {
       const message = chunk.toString('utf-8');
@@ -79,6 +85,7 @@ export default async (args = ['--tls-cert', 'server.crt', '--tls-key', 'server.k
     proc.stdout?.on('data', (chunk) => {
       const message = chunk.toString('utf-8');
       console.log(message);
+      // TODO: This relies on dendrite having info logging
       if (message.includes('Starting external listener')) {
         pResolve(proc);
       }
