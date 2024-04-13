@@ -62,7 +62,7 @@ export const initMatrixKey = async () => {
 }
 
 export const initTLSKey = async () => {
-  const tlsProc = spawnSync(generateKeysBinPath, ['--tls-cert', '._tmp_server.crt', '--tls-key', '._tmp_server.key'])
+  const tlsProc = spawnSync(generateKeysBinPath, ['--tls-cert', '._tmp_server.crt', '--tls-key', '._tmp_server.pem'])
   const key = await readFile('._tmp_server.pem', {encoding: 'utf8'})
   const crt = await readFile('._tmp_server.crt', {encoding: 'utf8'})
   await unlink('._tmp_server.pem')
@@ -72,7 +72,7 @@ export const initTLSKey = async () => {
   return {key, crt}
 }
 
-export default async (args = ['--config', 'dendrite.yaml', '--tls-cert', 'server.crt', '--tls-key', 'server.key']) => {
+export default async (args = ['--config', 'dendrite.yaml', '--tls-cert', 'server.crt', '--tls-key', 'server.pem']) => {
   const proc = await new Promise((pResolve, reject) => {
     const proc = spawn(
       dendriteBinPath,

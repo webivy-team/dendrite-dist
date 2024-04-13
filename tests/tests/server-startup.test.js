@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import test from "node:test";
+import { writeFile } from "node:fs/promises";
 
 import dendrite, {initMatrixKey, initTLSKey, createUser} from "dendrite-dist"
 
@@ -10,7 +11,7 @@ test("Server startup", async () => {
 
   const {key, crt} = await initTLSKey()
   await writeFile('server.crt', crt)
-  await writeFile('server.key', key)
+  await writeFile('server.pem', key)
 
   // Then start the server
   const server = await dendrite()
